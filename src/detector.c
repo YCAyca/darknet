@@ -1674,7 +1674,7 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
                 if (input[strlen(input) - 1] == 0x0d) input[strlen(input) - 1] = 0;
         }
         else {
-            printf("Enter Image Path: ");
+        //    printf("Enter Image Path: ");
             fflush(stdout);
             input = fgets(input, 256, stdin);
             if (!input) break;
@@ -1717,7 +1717,18 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
             else diounms_sort(dets, nboxes, l.classes, nms, l.nms_kind, l.beta_nms);
         }
         draw_detections_v3(im, dets, nboxes, thresh, names, alphabet, l.classes, ext_output);
-        save_image(im, "predictions");
+
+        // save the predictin results to the predictions folder with their bounding boxes"
+        const char* image_name = strrchr(input, '\\');
+        image_name++;
+       // printf("IMAGE NAME %s \n", image_name);
+
+        char output_file[50] = "predictions\\";
+        strcat(output_file, image_name);
+
+        printf("after concat  %s \n", output_file);
+  
+        save_image(im, output_file);
         if (!dont_show) {
             show_image(im, "predictions");
         }
@@ -1836,7 +1847,7 @@ void draw_object(char *datacfg, char *cfgfile, char *weightfile, char *filename,
                 if (input[strlen(input) - 1] == 0x0d) input[strlen(input) - 1] = 0;
         }
         else {
-            printf("Enter Image Path: ");
+         //   printf("Enter Image Path: ");
             fflush(stdout);
             input = fgets(input, 256, stdin);
             if (!input) break;
