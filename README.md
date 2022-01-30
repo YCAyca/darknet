@@ -114,6 +114,14 @@ So the data and cfg files are the same but I use the weights come from my traini
 
 <img src="images_readme/map.png" width=75% height=75%/>
 
+# TEST
+
+To obtain prediction results with their labels saved as annotation files and output images with bounding boxes in "predictions" folder, use the following command:
+
+darknet.exe detector test data/dataset_roadsign/obj.data cfg/yolov4-csp_roadsign.cfg backup/yolov4-csp_roadsign_final.weights -show_imgs -thresh 0.50 -save_labels 
+-ext_output <data/dataset_roadsign/test.txt > result.txt
+
+
 ## YOLOV4-CSP
 
 In the base source, there are different implementations of YOLOV4 with some different activation functions or little changes on the architecture. YOLOV4-CSP is one of them and to use it, the only thing you should do is download the pre-trained weights for this architecture and arrange yolov4-csp_custom.cfg file as explained for YOLOV4. Train, map calculation and test commands are also the same except of the name of the file.    
@@ -123,8 +131,21 @@ In the base source, there are different implementations of YOLOV4 with some diff
 
 # Some Possible Errors and Their Solutions
 
+* Error : Failed to get convolution algorithm  
+  You should arrange your batch and subdivision size in your .cfg file. You need to approach subdivison to the batch size until this error dismiss. 
 
+* Could not load library cudnn_cnn_infer64_8.dll : during cudnn installation, there is an additional step that you forgot to do probably. 
+
+  <img src="images_readme/cudnn.png" width=75% height=75%/>
+
+* If the training start and ends without any error, any of the dll files I mentioned may be missing or you probably give .cfg file path wrong in the command.
 
 # Configuration File Explanation
 
+angle : rotation angle for data augmentation <br>
+saturation : saturation for data augmentation <br>
+exposure : exposure for data augmentation <br>
+hue : hue for data augmentation <br>
+max_batches : it defines after how many batches your training will end <br>
+steps : the learning rate decreases according to these steps which are the iteration numbers <br>
 
