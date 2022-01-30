@@ -121,6 +121,9 @@ To obtain prediction results with their labels saved as annotation files and out
 darknet.exe detector test data/dataset_roadsign/obj.data cfg/yolov4-csp_roadsign.cfg backup/yolov4-csp_roadsign_final.weights -show_imgs -thresh 0.50 -save_labels 
 -ext_output <data/dataset_roadsign/test.txt > result.txt
 
+An example output image in predictions folder:
+
+<img src="images_readme/test.png" width=75% height=75%/>
 
 ## YOLOV4-CSP
 
