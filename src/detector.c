@@ -957,6 +957,8 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
     //if (mapf) map = read_map(mapf);
     FILE* reinforcement_fd = NULL;
 
+    FILE *map_log = fopen("maplog.txt", "w+");
+
     network net;
     //int initial_batch;
     if (existing_net) {
@@ -1179,6 +1181,14 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
                             else{
                                 fp_for_thresh++;
                                 fp_for_thresh_per_class[class_id]++;
+
+                            //    printf("FP: true class %s, predicted class %s \n", names[class_id], names[detections[z].class_id]);
+
+                                const char* image_name = strrchr(paths[detections[z].image_index], '\\');
+                                
+
+                                fprintf(map_log, "FP: true class %s, predicted class %s , image name : %s \n", names[class_id], names[detections[z].class_id], image_name);
+                              
                             }
                         }
                     }
@@ -1202,6 +1212,7 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
             free(id);
             free_image(val[t]);
             free_image(val_resized[t]);
+            
         }
     }
 
@@ -1418,6 +1429,8 @@ float validate_detector_map(char *datacfg, char *cfgfile, char *weightfile, floa
     if (buf) free(buf);
     if (buf_resized) free(buf_resized);
 
+    fclose(map_log);
+
     return mean_average_precision;
 }
 
@@ -1633,7 +1646,7 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
     float hier_thresh, int dont_show, int ext_output, int save_labels, char *outfile, int letter_box, int benchmark_layers)
 {
     list *options = read_data_cfg(datacfg);
-    char* name_list = "data/dataset_roadsign/obj.names"; //option_find_str(options, "names", "data/names.list");
+    char* name_list = option_find_str(options, "names", "data/names.list");
     int names_size = 0;
     char **names = get_labels_custom(name_list, &names_size); //get_labels(name_list);
 
