@@ -88,7 +88,7 @@ To train your custom model using pre-trained weights (which I do usually to have
 * Arrange yolov4_custom.cfg file that you can find in cfg folder. 
   *  You need to change classes= line according to the number of classes in your dataset
   *  You need to change filters= line coming just before yolo layer to the amount of 
-  (class_number + 5)x3 . For example, for my sample case I had 4 classes and I arranged the .cfg file as follows. There are 3 of each of them so don't forget to change all!
+ <b> (class_number + 5)x3 </b>. For example, for my sample case I had 4 classes and I arranged the .cfg file as follows. There are 3 of each of them so don't forget to change all!
 
     <img src="images_readme/cfg.png" width=75% height=75%/>
 
