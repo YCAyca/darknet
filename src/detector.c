@@ -31,6 +31,8 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
     char *valid_images = option_find_str(options, "valid", train_images);
     char *backup_directory = option_find_str(options, "backup", "/backup/");
 
+    FILE * train_log = fopen("trainlog.txt", "w+");
+
     network net_map;
     if (calc_map) {
         FILE* valid_file = fopen(valid_images, "r");
@@ -302,7 +304,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         const int iteration = get_current_iteration(net);
         //i = get_current_batch(net);
 
-        int calc_map_for_each =  500; // calculate mAP for each 4 Epochs
+        int calc_map_for_each =  10; // calculate mAP for each 4 Epochs
         int next_map_calc = iter_map + calc_map_for_each;
       //  next_map_calc = fmax(next_map_calc, 400);
         if (calc_map) {
@@ -324,7 +326,10 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             else fprintf(stderr, "\n Tensor Cores are used.\n");
             fflush(stderr);
         }
-        printf("\n %d: %f, %f avg loss, %f rate, %lf seconds, %d images, %f hours left\n", iteration, loss, avg_loss, get_current_rate(net), (what_time_is_it_now() - time), iteration*imgs, avg_time);
+
+        fprintf(train_log, "iteration %d, loss %f , learning rate %f \n", iteration, loss, net.learning_rate);
+
+        printf("\n %d: %f, %f avg loss, %f rate, %lf seconds, %d images, %f hours left\n", iteration, loss, avg_loss, net.learning_rate, (what_time_is_it_now() - time), iteration*imgs, avg_time);
         fflush(stdout);
 
         int draw_precision = 0;
@@ -361,10 +366,10 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             copy_weights_net(net, &net_map);
 
             // combine Training and Validation networks
-            //network net_combined = combine_train_valid_networks(net, net_map);
+        //    network net_combined = combine_train_valid_networks(net, net_map);
 
             iter_map = iteration;
-            mean_average_precision = validate_detector_map(datacfg, cfgfile, weightfile, thresh, iou_thresh, 0, net.letter_box, NULL);// &net_combined);
+            mean_average_precision = validate_detector_map(datacfg, cfgfile, weightfile, thresh, iou_thresh, 0, net.letter_box, NULL);
             printf("\n mean_average_precision (mAP@%0.2f) = %f \n", iou_thresh, mean_average_precision);
             if (mean_average_precision > best_map) {
                 best_map = mean_average_precision;
@@ -393,8 +398,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
 
         //if (i % 1000 == 0 || (i < 1000 && i % 100 == 0)) {
         //if (i % 100 == 0) {
-        if ((iteration >= (iter_save + 10000) || iteration % 10000 == 0) ||
-            (iteration >= (iter_save + 1000) || iteration % 1000 == 0) && net.max_batches < 10000)
+        if ((iteration % 1000 == 0 && net.max_batches < 15000) || (iteration % 10000 == 0 && net.max_batches > 15000))
         {
             iter_save = iteration;
 #ifdef GPU
@@ -460,6 +464,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         free_network(net_map);
     }
 
+    fclose(train_log);
 
 }
 

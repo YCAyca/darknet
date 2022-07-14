@@ -1109,7 +1109,7 @@ data load_data_detection(int n, char **paths, int m, int w, int h, int c, int bo
             mat_cv *src;
             src = load_image_mat_cv(filename, flag);
 
-            printf("filename", filename);
+        //    printf("filename", filename);
 
             if (src == NULL) {
                 printf("\n Error in load_data_detection() - OpenCV \n");
